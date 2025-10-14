@@ -1,7 +1,35 @@
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { toast } from "@/hooks/use-toast";
+import { Session } from "@supabase/supabase-js";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Logout realizado",
+      description: "Até logo!",
+    });
+  };
+
   return (
     <header className="border-b bg-card sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
@@ -26,12 +54,26 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm">
-              Entrar
-            </Button>
-            <Button size="sm">
-              Cadastrar
-            </Button>
+            {session ? (
+              <>
+                <span className="text-sm text-muted-foreground hidden md:inline">
+                  {session.user.email}
+                </span>
+                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>
+                  Entrar
+                </Button>
+                <Button size="sm" onClick={() => navigate("/auth")}>
+                  Cadastrar
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
