@@ -1,14 +1,16 @@
-import { TrendingUp, LogOut } from "lucide-react";
+import { TrendingUp, LogOut, Shield } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
+import { useAdminCheck } from "@/hooks/useAdminCheck";
 
 const Header = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
+  const { isAdmin } = useAdminCheck();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -56,6 +58,12 @@ const Header = () => {
           <div className="flex items-center gap-2">
             {session ? (
               <>
+                {isAdmin && (
+                  <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Admin
+                  </Button>
+                )}
                 <span className="text-sm text-muted-foreground hidden md:inline">
                   {session.user.email}
                 </span>
