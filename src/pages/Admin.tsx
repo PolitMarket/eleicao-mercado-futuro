@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateMarketForm } from "@/components/admin/CreateMarketForm";
 import { MarketsList } from "@/components/admin/MarketsList";
+import { BetsList } from "@/components/admin/BetsList";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -24,13 +25,18 @@ const Admin = () => {
           <h1 className="text-3xl font-bold mb-8">Painel de Administração</h1>
 
           <Tabs defaultValue="manage" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="manage">Gerenciar Mercados</TabsTrigger>
+              <TabsTrigger value="bets">Gerenciar Apostas</TabsTrigger>
               <TabsTrigger value="create">Criar Novo Mercado</TabsTrigger>
             </TabsList>
             
             <TabsContent value="manage" className="mt-6">
               <MarketsList />
+            </TabsContent>
+            
+            <TabsContent value="bets" className="mt-6">
+              <BetsList />
             </TabsContent>
             
             <TabsContent value="create" className="mt-6">
