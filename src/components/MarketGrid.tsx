@@ -1,7 +1,11 @@
 import MarketCard from "./MarketCard";
 import { useMarkets } from "@/hooks/useMarkets";
 
-const MarketGrid = () => {
+interface MarketGridProps {
+  category: string;
+}
+
+const MarketGrid = ({ category }: MarketGridProps) => {
   const { data: markets, isLoading } = useMarkets();
 
   if (isLoading) {
@@ -12,10 +16,24 @@ const MarketGrid = () => {
     );
   }
 
+  const filteredMarkets = category === "all" 
+    ? markets 
+    : markets?.filter(m => m.category === category);
+
+  if (!filteredMarkets || filteredMarkets.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-muted-foreground">
+          Nenhum mercado encontrado nesta categoria.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {markets?.map((market) => (
+        {filteredMarkets.map((market) => (
           <MarketCard
             key={market.id}
             title={market.title}
