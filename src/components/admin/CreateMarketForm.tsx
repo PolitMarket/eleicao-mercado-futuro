@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { ImageIcon } from "lucide-react";
 
 export const CreateMarketForm = () => {
   const { toast } = useToast();
@@ -112,7 +113,33 @@ export const CreateMarketForm = () => {
           onChange={(e) =>
             setFormData({ ...formData, imageUrl: e.target.value })
           }
+          placeholder="https://exemplo.com/imagem.jpg"
         />
+        <p className="text-xs text-muted-foreground">
+          Use URLs diretas de imagens (terminam em .jpg, .png, .webp). Links do Google Images não funcionam - clique com botão direito na imagem e selecione "Copiar endereço da imagem".
+        </p>
+        {formData.imageUrl && (
+          <div className="mt-2 border rounded-lg p-4 bg-muted/50">
+            <p className="text-xs font-medium mb-2">Preview:</p>
+            <div className="relative w-full h-40 bg-background rounded-md overflow-hidden flex items-center justify-center">
+              <img
+                src={formData.imageUrl}
+                alt="Preview"
+                className="max-w-full max-h-full object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  const parent = e.currentTarget.parentElement;
+                  if (parent) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'text-destructive text-sm flex flex-col items-center gap-2';
+                    errorDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>URL inválida ou imagem inacessível</span>';
+                    parent.appendChild(errorDiv);
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">
