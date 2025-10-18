@@ -1,15 +1,18 @@
-import { TrendingUp, LogOut, Shield } from "lucide-react";
+import { TrendingUp, LogOut, Shield, Coins } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
+import { BuyCreditsDialog } from "./BuyCreditsDialog";
+import { useUserBalance } from "@/hooks/useUserBalance";
 
 const Header = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { balance, refetch: refetchBalance } = useUserBalance(session);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -77,6 +80,11 @@ const Header = () => {
           <div className="flex items-center gap-2">
             {session ? (
               <>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary/10 text-primary">
+                  <Coins className="h-4 w-4" />
+                  <span className="text-sm font-semibold">{balance.toFixed(0)}</span>
+                </div>
+                <BuyCreditsDialog />
                 {isAdmin && (
                   <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
                     <Shield className="h-4 w-4 mr-2" />

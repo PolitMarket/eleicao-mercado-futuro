@@ -1,12 +1,15 @@
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { TrendingUp, Bookmark } from "lucide-react";
+import { TrendingUp, Bookmark, Coins } from "lucide-react";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Session } from "@supabase/supabase-js";
+import { useNavigate } from "react-router-dom";
 
 interface Option {
   name: string;
@@ -21,23 +24,73 @@ interface MarketCardProps {
   options: Option[];
   volume: string;
   isLive?: boolean;
+  marketId?: string;
 }
 
-const MarketCard = ({ title, category, image, options, volume, isLive }: MarketCardProps) => {
+const MarketCard = ({ title, category, image, options, volume, isLive, marketId }: MarketCardProps) => {
+  const navigate = useNavigate();
   const maxPercentage = Math.max(...options.map(o => o.percentage));
   const [betDialogOpen, setBetDialogOpen] = useState(false);
   const [betAmount, setBetAmount] = useState("");
   const [betType, setBetType] = useState<"sim" | "nao">("sim");
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [balance, setBalance] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (!session?.user) {
+        setBalance(0);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("balance")
+        .eq("id", session.user.id)
+        .single();
+
+      setBalance(data?.balance || 0);
+    };
+
+    fetchBalance();
+  }, [session]);
 
   const handleBetClick = (option: Option, type: "sim" | "nao") => {
+    if (!session) {
+      toast({
+        title: "Login necessário",
+        description: "Você precisa estar logado para fazer apostas.",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+
     setSelectedOption(option);
     setBetType(type);
     setBetDialogOpen(true);
   };
 
-  const handleConfirmBet = () => {
-    if (!betAmount || parseFloat(betAmount) <= 0) {
+  const handleConfirmBet = async () => {
+    if (!session?.user || !marketId) return;
+
+    const amount = parseFloat(betAmount);
+    
+    if (!amount || amount <= 0) {
       toast({
         title: "Erro",
         description: "Por favor, insira um valor válido.",
@@ -46,13 +99,70 @@ const MarketCard = ({ title, category, image, options, volume, isLive }: MarketC
       return;
     }
 
-    toast({
-      title: "Aposta confirmada!",
-      description: `Você apostou R$ ${betAmount} em "${betType === "sim" ? "Sim" : "Não"}" para ${selectedOption?.name}`,
-    });
+    if (amount > balance) {
+      toast({
+        title: "Saldo insuficiente",
+        description: "Você não tem créditos suficientes para esta aposta.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    setBetDialogOpen(false);
-    setBetAmount("");
+    setLoading(true);
+
+    try {
+      // Atualizar saldo
+      const newBalance = balance - amount;
+      const { error: balanceError } = await supabase
+        .from("profiles")
+        .update({ balance: newBalance })
+        .eq("id", session.user.id);
+
+      if (balanceError) throw balanceError;
+
+      // Registrar aposta
+      const { error: betError } = await supabase
+        .from("bets")
+        .insert({
+          user_id: session.user.id,
+          market_id: marketId,
+          amount: amount,
+          prediction: betType === "sim",
+        });
+
+      if (betError) throw betError;
+
+      // Registrar transação
+      const { error: transactionError } = await supabase
+        .from("transactions")
+        .insert({
+          user_id: session.user.id,
+          amount: -amount,
+          type: "bet",
+          description: `Aposta em ${title} - ${betType === "sim" ? "Sim" : "Não"}`,
+        });
+
+      if (transactionError) throw transactionError;
+
+      setBalance(newBalance);
+      
+      toast({
+        title: "Aposta confirmada!",
+        description: `Você apostou ${amount} créditos em "${betType === "sim" ? "Sim" : "Não"}" para ${selectedOption?.name}`,
+      });
+
+      setBetDialogOpen(false);
+      setBetAmount("");
+    } catch (error) {
+      console.error("Error placing bet:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao realizar aposta. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -151,28 +261,36 @@ const MarketCard = ({ title, category, image, options, volume, isLive }: MarketC
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-primary/10">
+              <span className="text-sm font-medium">Seu saldo:</span>
+              <div className="flex items-center gap-2">
+                <Coins className="h-4 w-4 text-primary" />
+                <span className="text-lg font-bold">{balance.toFixed(0)} créditos</span>
+              </div>
+            </div>
             <div className="grid gap-2">
-              <Label htmlFor="amount">Valor da aposta (R$)</Label>
+              <Label htmlFor="amount">Valor da aposta (créditos)</Label>
               <Input
                 id="amount"
                 type="number"
-                placeholder="100.00"
+                placeholder="100"
                 value={betAmount}
                 onChange={(e) => setBetAmount(e.target.value)}
-                min="0"
-                step="0.01"
+                min="1"
+                max={balance}
+                step="1"
               />
             </div>
             <div className="text-sm text-muted-foreground">
-              Retorno potencial: R$ {betAmount ? (parseFloat(betAmount) * (betType === "sim" ? (100 / (selectedOption?.percentage || 1)) : (100 / (100 - (selectedOption?.percentage || 50))))).toFixed(2) : "0.00"}
+              Retorno potencial: {betAmount ? (parseFloat(betAmount) * (betType === "sim" ? (100 / (selectedOption?.percentage || 1)) : (100 / (100 - (selectedOption?.percentage || 50))))).toFixed(0) : "0"} créditos
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setBetDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setBetDialogOpen(false)} disabled={loading}>
               Cancelar
             </Button>
-            <Button onClick={handleConfirmBet}>
-              Confirmar Aposta
+            <Button onClick={handleConfirmBet} disabled={loading}>
+              {loading ? "Processando..." : "Confirmar Aposta"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -36,6 +36,7 @@ const MarketGrid = ({ category }: MarketGridProps) => {
         {filteredMarkets.map((market) => (
           <MarketCard
             key={market.id}
+            marketId={market.id}
             title={market.title}
             category={market.category}
             image={market.image_url || "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=100&h=100&fit=crop"}

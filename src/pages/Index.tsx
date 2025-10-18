@@ -3,9 +3,13 @@ import HeroSection from "@/components/HeroSection";
 import CategoryTabs from "@/components/CategoryTabs";
 import MarketGrid from "@/components/MarketGrid";
 import { useState } from "react";
+import { usePaymentVerification } from "@/hooks/usePaymentVerification";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  
+  // Verificar pagamento após redirect do Stripe
+  usePaymentVerification();
 
   return (
     <div className="min-h-screen bg-background">
