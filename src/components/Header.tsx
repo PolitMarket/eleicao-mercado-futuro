@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 import { BuyCreditsDialog } from "./BuyCreditsDialog";
+import { WithdrawDialog } from "./WithdrawDialog";
 import { useUserBalance } from "@/hooks/useUserBalance";
 
 const Header = () => {
@@ -85,6 +86,7 @@ const Header = () => {
                   <span className="text-sm font-semibold">{balance.toFixed(0)}</span>
                 </div>
                 <BuyCreditsDialog />
+                <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
                 {isAdmin && (
                   <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
                     <Shield className="h-4 w-4 mr-2" />
