@@ -190,6 +190,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_balance: {
+        Args: { amount: number; user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
