@@ -195,53 +195,80 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
         </div>
 
         <div className="space-y-3">
-          {options.map((option, idx) => (
-            <div key={idx}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">{option.name}</span>
-                <div className="flex items-center gap-2">
-                  {option.trend && (
-                    <TrendingUp 
-                      className={`h-3 w-3 ${
-                        option.trend === 'up' ? 'text-success rotate-0' : 'text-danger rotate-180'
-                      }`} 
-                    />
-                  )}
-                  <span className="text-lg font-bold">
-                    {option.percentage}%
-                  </span>
-                </div>
-              </div>
-              <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+          {/* Aposta simples Sim/Não - mostra apenas 2 botões */}
+          {options.length === 2 && options[0].name === "Sim" && options[1].name === "Não" ? (
+            <div>
+              <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-3">
                 <div 
-                  className={`absolute h-full rounded-full transition-all duration-500 ${
-                    option.percentage === maxPercentage 
-                      ? 'bg-success' 
-                      : 'bg-danger'
-                  }`}
-                  style={{ width: `${option.percentage}%` }}
+                  className="absolute h-full rounded-full transition-all duration-500 bg-success"
+                  style={{ width: `${options[0].percentage}%` }}
                 />
               </div>
-              <div className="flex gap-2 mt-2">
+              <div className="flex gap-2">
                 <Button 
                   size="sm" 
                   variant="outline"
                   className="flex-1 text-xs bg-success/5 border-success/20 hover:bg-success/10"
-                  onClick={() => handleBetClick(option, "sim")}
+                  onClick={() => handleBetClick(options[0], "sim")}
                 >
-                  Sim {option.percentage}%
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold">Sim</span>
+                    <span className="text-lg">{options[0].percentage}%</span>
+                  </div>
                 </Button>
                 <Button 
                   size="sm" 
                   variant="outline"
                   className="flex-1 text-xs bg-danger/5 border-danger/20 hover:bg-danger/10"
-                  onClick={() => handleBetClick(option, "nao")}
+                  onClick={() => handleBetClick(options[1], "nao")}
                 >
-                  Não {100 - option.percentage}%
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold">Não</span>
+                    <span className="text-lg">{options[1].percentage}%</span>
+                  </div>
                 </Button>
               </div>
             </div>
-          ))}
+          ) : (
+            /* Aposta entre candidatos - mostra 1 botão por candidato */
+            options.map((option, idx) => (
+              <div key={idx}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">{option.name}</span>
+                  <div className="flex items-center gap-2">
+                    {option.trend && (
+                      <TrendingUp 
+                        className={`h-3 w-3 ${
+                          option.trend === 'up' ? 'text-success rotate-0' : 'text-danger rotate-180'
+                        }`} 
+                      />
+                    )}
+                    <span className="text-lg font-bold">
+                      {option.percentage}%
+                    </span>
+                  </div>
+                </div>
+                <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-2">
+                  <div 
+                    className={`absolute h-full rounded-full transition-all duration-500 ${
+                      option.percentage === maxPercentage 
+                        ? 'bg-success' 
+                        : 'bg-danger'
+                    }`}
+                    style={{ width: `${option.percentage}%` }}
+                  />
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="w-full text-xs bg-primary/5 border-primary/20 hover:bg-primary/10"
+                  onClick={() => handleBetClick(option, "sim")}
+                >
+                  Apostar em {option.name}
+                </Button>
+              </div>
+            ))
+          )}
         </div>
 
         <div className="mt-4 pt-4 border-t flex items-center justify-between text-xs text-muted-foreground">
