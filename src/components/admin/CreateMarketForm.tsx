@@ -17,6 +17,9 @@ export const CreateMarketForm = () => {
     category: "",
     imageUrl: "",
     endDate: "",
+    marketType: "yes_no" as "yes_no" | "candidates",
+    candidate1: "",
+    candidate2: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,6 +27,16 @@ export const CreateMarketForm = () => {
     setLoading(true);
 
     try {
+      // Validações
+      if (formData.marketType === "candidates") {
+        if (!formData.candidate1 || !formData.candidate2) {
+          throw new Error("Preencha os nomes dos dois candidatos");
+        }
+        if (formData.candidate1 === formData.candidate2) {
+          throw new Error("Os candidatos devem ter nomes diferentes");
+        }
+      }
+
       const { error } = await supabase.from("markets").insert({
         title: formData.title,
         description: formData.description,
@@ -31,6 +44,10 @@ export const CreateMarketForm = () => {
         image_url: formData.imageUrl,
         end_date: new Date(formData.endDate).toISOString(),
         status: "active",
+        market_type: formData.marketType,
+        candidate_1_name: formData.marketType === "candidates" ? formData.candidate1 : null,
+        candidate_2_name: formData.marketType === "candidates" ? formData.candidate2 : null,
+        yes_percentage: 50, // Começar com 50/50
       });
 
       if (error) throw error;
@@ -46,6 +63,9 @@ export const CreateMarketForm = () => {
         category: "",
         imageUrl: "",
         endDate: "",
+        marketType: "yes_no",
+        candidate1: "",
+        candidate2: "",
       });
     } catch (error: any) {
       toast({
@@ -69,6 +89,7 @@ export const CreateMarketForm = () => {
             setFormData({ ...formData, title: e.target.value })
           }
           required
+          placeholder="Ex: Quem vencerá as eleições de 2026?"
         />
       </div>
 
@@ -81,8 +102,62 @@ export const CreateMarketForm = () => {
             setFormData({ ...formData, description: e.target.value })
           }
           required
+          placeholder="Descreva os detalhes da aposta..."
         />
       </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="marketType">Tipo de Aposta</Label>
+        <Select
+          value={formData.marketType}
+          onValueChange={(value: "yes_no" | "candidates") =>
+            setFormData({ ...formData, marketType: value })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="yes_no">Sim ou Não</SelectItem>
+            <SelectItem value="candidates">Entre Candidatos</SelectItem>
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground">
+          {formData.marketType === "yes_no" 
+            ? "Apostas com apenas duas opções: Sim ou Não" 
+            : "Apostas entre dois candidatos específicos"}
+        </p>
+      </div>
+
+      {formData.marketType === "candidates" && (
+        <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+          <p className="text-sm font-medium">Candidatos</p>
+          <div className="space-y-2">
+            <Label htmlFor="candidate1">Candidato 1</Label>
+            <Input
+              id="candidate1"
+              value={formData.candidate1}
+              onChange={(e) =>
+                setFormData({ ...formData, candidate1: e.target.value })
+              }
+              required={formData.marketType === "candidates"}
+              placeholder="Ex: Lula"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="candidate2">Candidato 2</Label>
+            <Input
+              id="candidate2"
+              value={formData.candidate2}
+              onChange={(e) =>
+                setFormData({ ...formData, candidate2: e.target.value })
+              }
+              required={formData.marketType === "candidates"}
+              placeholder="Ex: Bolsonaro"
+            />
+          </div>
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="category">Categoria</Label>

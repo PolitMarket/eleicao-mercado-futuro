@@ -51,6 +51,8 @@ export type Database = {
       }
       markets: {
         Row: {
+          candidate_1_name: string | null
+          candidate_2_name: string | null
           category: string
           created_at: string
           created_by: string | null
@@ -58,6 +60,7 @@ export type Database = {
           end_date: string
           id: string
           image_url: string | null
+          market_type: string | null
           status: string | null
           title: string
           total_volume: number | null
@@ -65,6 +68,8 @@ export type Database = {
           yes_percentage: number | null
         }
         Insert: {
+          candidate_1_name?: string | null
+          candidate_2_name?: string | null
           category: string
           created_at?: string
           created_by?: string | null
@@ -72,6 +77,7 @@ export type Database = {
           end_date: string
           id?: string
           image_url?: string | null
+          market_type?: string | null
           status?: string | null
           title: string
           total_volume?: number | null
@@ -79,6 +85,8 @@ export type Database = {
           yes_percentage?: number | null
         }
         Update: {
+          candidate_1_name?: string | null
+          candidate_2_name?: string | null
           category?: string
           created_at?: string
           created_by?: string | null
@@ -86,6 +94,7 @@ export type Database = {
           end_date?: string
           id?: string
           image_url?: string | null
+          market_type?: string | null
           status?: string | null
           title?: string
           total_volume?: number | null
