@@ -7,14 +7,29 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import { BrowserProvider } from "ethers";
+
+const validatePasswordStrength = (password: string) => {
+  const requirements = {
+    minLength: password.length >= 8,
+    hasUpperCase: /[A-Z]/.test(password),
+    hasLowerCase: /[a-z]/.test(password),
+    hasNumber: /\d/.test(password),
+    hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+  };
+
+  const isValid = Object.values(requirements).every(Boolean);
+  return { isValid, requirements };
+};
 
 const Auth = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+  const passwordValidation = validatePasswordStrength(password);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -35,6 +50,16 @@ const Auth = () => {
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!passwordValidation.isValid) {
+      toast({
+        title: "Senha fraca",
+        description: "Por favor, crie uma senha que atenda todos os requisitos de segurança.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -236,9 +261,66 @@ const Auth = () => {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setShowPasswordRequirements(true)}
                     required
-                    minLength={6}
                   />
+                  {showPasswordRequirements && password && (
+                    <div className="space-y-2 p-3 bg-muted rounded-lg text-sm">
+                      <p className="font-semibold text-xs text-muted-foreground mb-2">Requisitos de senha:</p>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          {passwordValidation.requirements.minLength ? (
+                            <CheckCircle2 className="h-4 w-4 text-success" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                          )}
+                          <span className={passwordValidation.requirements.minLength ? "text-success" : "text-muted-foreground"}>
+                            Mínimo 8 caracteres
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {passwordValidation.requirements.hasUpperCase ? (
+                            <CheckCircle2 className="h-4 w-4 text-success" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                          )}
+                          <span className={passwordValidation.requirements.hasUpperCase ? "text-success" : "text-muted-foreground"}>
+                            Uma letra maiúscula
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {passwordValidation.requirements.hasLowerCase ? (
+                            <CheckCircle2 className="h-4 w-4 text-success" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                          )}
+                          <span className={passwordValidation.requirements.hasLowerCase ? "text-success" : "text-muted-foreground"}>
+                            Uma letra minúscula
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {passwordValidation.requirements.hasNumber ? (
+                            <CheckCircle2 className="h-4 w-4 text-success" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                          )}
+                          <span className={passwordValidation.requirements.hasNumber ? "text-success" : "text-muted-foreground"}>
+                            Um número
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {passwordValidation.requirements.hasSpecialChar ? (
+                            <CheckCircle2 className="h-4 w-4 text-success" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                          )}
+                          <span className={passwordValidation.requirements.hasSpecialChar ? "text-success" : "text-muted-foreground"}>
+                            Um caractere especial (!@#$%^&*)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Cadastrando..." : "Cadastrar"}
