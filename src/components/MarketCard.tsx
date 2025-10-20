@@ -198,76 +198,75 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
           {/* Aposta simples Sim/Não - mostra apenas 2 botões */}
           {options.length === 2 && options[0].name === "Sim" && options[1].name === "Não" ? (
             <div>
-              <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-3">
+              <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-4">
                 <div 
                   className="absolute h-full rounded-full transition-all duration-500 bg-success"
                   style={{ width: `${options[0].percentage}%` }}
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <Button 
-                  size="sm" 
                   variant="outline"
-                  className="flex-1 text-xs bg-success/5 border-success/20 hover:bg-success/10"
+                  className="h-auto py-4 bg-success/10 border-success/30 hover:bg-success/20 hover:border-success/50"
                   onClick={() => handleBetClick(options[0], "sim")}
                 >
-                  <div className="flex flex-col items-center">
-                    <span className="font-bold">Sim</span>
-                    <span className="text-lg">{options[0].percentage}%</span>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="font-bold text-base">Sim</span>
+                    <span className="text-2xl font-bold text-success">{options[0].percentage}%</span>
                   </div>
                 </Button>
                 <Button 
-                  size="sm" 
                   variant="outline"
-                  className="flex-1 text-xs bg-danger/5 border-danger/20 hover:bg-danger/10"
+                  className="h-auto py-4 bg-danger/10 border-danger/30 hover:bg-danger/20 hover:border-danger/50"
                   onClick={() => handleBetClick(options[1], "nao")}
                 >
-                  <div className="flex flex-col items-center">
-                    <span className="font-bold">Não</span>
-                    <span className="text-lg">{options[1].percentage}%</span>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="font-bold text-base">Não</span>
+                    <span className="text-2xl font-bold text-danger">{options[1].percentage}%</span>
                   </div>
                 </Button>
               </div>
             </div>
           ) : (
             /* Aposta entre candidatos - mostra 1 botão por candidato */
-            options.map((option, idx) => (
-              <div key={idx}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">{option.name}</span>
-                  <div className="flex items-center gap-2">
-                    {option.trend && (
-                      <TrendingUp 
-                        className={`h-3 w-3 ${
-                          option.trend === 'up' ? 'text-success rotate-0' : 'text-danger rotate-180'
-                        }`} 
-                      />
-                    )}
-                    <span className="text-lg font-bold">
-                      {option.percentage}%
-                    </span>
+            <div className="space-y-4">
+              {options.map((option, idx) => (
+                <div key={idx} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold">{option.name}</span>
+                    <div className="flex items-center gap-2">
+                      {option.trend && (
+                        <TrendingUp 
+                          className={`h-4 w-4 ${
+                            option.trend === 'up' ? 'text-success rotate-0' : 'text-danger rotate-180'
+                          }`} 
+                        />
+                      )}
+                      <span className="text-xl font-bold">
+                        {option.percentage}%
+                      </span>
+                    </div>
                   </div>
+                  <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className={`absolute h-full rounded-full transition-all duration-500 ${
+                        option.percentage === maxPercentage 
+                          ? 'bg-success' 
+                          : 'bg-primary'
+                      }`}
+                      style={{ width: `${option.percentage}%` }}
+                    />
+                  </div>
+                  <Button 
+                    variant="outline"
+                    className="w-full h-auto py-3 bg-primary/10 border-primary/30 hover:bg-primary/20 hover:border-primary/50"
+                    onClick={() => handleBetClick(option, "sim")}
+                  >
+                    <span className="font-semibold">Apostar em {option.name}</span>
+                  </Button>
                 </div>
-                <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-2">
-                  <div 
-                    className={`absolute h-full rounded-full transition-all duration-500 ${
-                      option.percentage === maxPercentage 
-                        ? 'bg-success' 
-                        : 'bg-danger'
-                    }`}
-                    style={{ width: `${option.percentage}%` }}
-                  />
-                </div>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  className="w-full text-xs bg-primary/5 border-primary/20 hover:bg-primary/10"
-                  onClick={() => handleBetClick(option, "sim")}
-                >
-                  Apostar em {option.name}
-                </Button>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
 
