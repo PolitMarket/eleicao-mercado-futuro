@@ -197,72 +197,56 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
         <div className="space-y-3">
           {/* Aposta simples Sim/Não - mostra apenas 2 botões */}
           {options.length === 2 && options[0].name === "Sim" && options[1].name === "Não" ? (
-            <div>
-              <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-4">
+            <div className="space-y-3">
+              <div className="relative h-2 bg-muted rounded-full overflow-hidden">
                 <div 
                   className="absolute h-full rounded-full transition-all duration-500 bg-success"
                   style={{ width: `${options[0].percentage}%` }}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <Button 
+                  size="sm"
                   variant="outline"
-                  className="h-auto py-4 bg-success/10 border-success/30 hover:bg-success/20 hover:border-success/50"
+                  className="bg-success/10 border-success/30 hover:bg-success/20"
                   onClick={() => handleBetClick(options[0], "sim")}
                 >
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="font-bold text-base">Sim</span>
-                    <span className="text-2xl font-bold text-success">{options[0].percentage}%</span>
-                  </div>
+                  <span className="font-semibold">Sim {options[0].percentage}%</span>
                 </Button>
                 <Button 
+                  size="sm"
                   variant="outline"
-                  className="h-auto py-4 bg-danger/10 border-danger/30 hover:bg-danger/20 hover:border-danger/50"
+                  className="bg-danger/10 border-danger/30 hover:bg-danger/20"
                   onClick={() => handleBetClick(options[1], "nao")}
                 >
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="font-bold text-base">Não</span>
-                    <span className="text-2xl font-bold text-danger">{options[1].percentage}%</span>
-                  </div>
+                  <span className="font-semibold">Não {options[1].percentage}%</span>
                 </Button>
               </div>
             </div>
           ) : (
             /* Aposta entre candidatos - mostra 1 botão por candidato */
-            <div className="space-y-4">
+            <div className="space-y-3">
               {options.map((option, idx) => (
                 <div key={idx} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold">{option.name}</span>
-                    <div className="flex items-center gap-2">
-                      {option.trend && (
-                        <TrendingUp 
-                          className={`h-4 w-4 ${
-                            option.trend === 'up' ? 'text-success rotate-0' : 'text-danger rotate-180'
-                          }`} 
-                        />
-                      )}
-                      <span className="text-xl font-bold">
-                        {option.percentage}%
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">{option.name}</span>
+                    <span className="font-bold">{option.percentage}%</span>
                   </div>
-                  <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="relative h-1.5 bg-muted rounded-full overflow-hidden">
                     <div 
                       className={`absolute h-full rounded-full transition-all duration-500 ${
-                        option.percentage === maxPercentage 
-                          ? 'bg-success' 
-                          : 'bg-primary'
+                        option.percentage === maxPercentage ? 'bg-success' : 'bg-primary'
                       }`}
                       style={{ width: `${option.percentage}%` }}
                     />
                   </div>
                   <Button 
+                    size="sm"
                     variant="outline"
-                    className="w-full h-auto py-3 bg-primary/10 border-primary/30 hover:bg-primary/20 hover:border-primary/50"
+                    className="w-full"
                     onClick={() => handleBetClick(option, "sim")}
                   >
-                    <span className="font-semibold">Apostar em {option.name}</span>
+                    Apostar
                   </Button>
                 </div>
               ))}
