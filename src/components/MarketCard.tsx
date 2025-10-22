@@ -132,18 +132,6 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
 
       if (betError) throw betError;
 
-      // Registrar transação
-      const { error: transactionError } = await supabase
-        .from("transactions")
-        .insert({
-          user_id: session.user.id,
-          amount: -amount,
-          type: "bet",
-          description: `Aposta em ${title} - ${betType === "sim" ? "Sim" : "Não"}`,
-        });
-
-      if (transactionError) throw transactionError;
-
       setBalance(newBalance);
       
       toast({
