@@ -52,7 +52,9 @@ export type Database = {
       markets: {
         Row: {
           candidate_1_name: string | null
+          candidate_1_volume: number | null
           candidate_2_name: string | null
+          candidate_2_volume: number | null
           category: string
           created_at: string
           created_by: string | null
@@ -61,15 +63,19 @@ export type Database = {
           id: string
           image_url: string | null
           market_type: string | null
+          no_volume: number | null
           status: string | null
           title: string
           total_volume: number | null
           updated_at: string
           yes_percentage: number | null
+          yes_volume: number | null
         }
         Insert: {
           candidate_1_name?: string | null
+          candidate_1_volume?: number | null
           candidate_2_name?: string | null
+          candidate_2_volume?: number | null
           category: string
           created_at?: string
           created_by?: string | null
@@ -78,15 +84,19 @@ export type Database = {
           id?: string
           image_url?: string | null
           market_type?: string | null
+          no_volume?: number | null
           status?: string | null
           title: string
           total_volume?: number | null
           updated_at?: string
           yes_percentage?: number | null
+          yes_volume?: number | null
         }
         Update: {
           candidate_1_name?: string | null
+          candidate_1_volume?: number | null
           candidate_2_name?: string | null
+          candidate_2_volume?: number | null
           category?: string
           created_at?: string
           created_by?: string | null
@@ -95,11 +105,13 @@ export type Database = {
           id?: string
           image_url?: string | null
           market_type?: string | null
+          no_volume?: number | null
           status?: string | null
           title?: string
           total_volume?: number | null
           updated_at?: string
           yes_percentage?: number | null
+          yes_volume?: number | null
         }
         Relationships: []
       }

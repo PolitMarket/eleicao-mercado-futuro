@@ -1,4 +1,4 @@
-import { TrendingUp, LogOut, Shield, Coins } from "lucide-react";
+import { TrendingUp, LogOut, Shield, Coins, ListChecks } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -67,12 +67,14 @@ const Header = () => {
           </div>
           
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">
-              Eleições
+            <a href="/" className="text-sm font-medium hover:text-primary transition-colors">
+              Mercados
             </a>
-            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">
-              Candidatos
-            </a>
+            {session && (
+              <a href="/my-bets" className="text-sm font-medium hover:text-primary transition-colors">
+                Minhas Apostas
+              </a>
+            )}
             <a href="#" className="text-sm font-medium hover:text-primary transition-colors">
               Como Funciona
             </a>
@@ -87,6 +89,10 @@ const Header = () => {
                 </div>
                 <BuyCreditsDialog />
                 <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
+                <Button variant="outline" size="sm" onClick={() => navigate("/my-bets")} className="hidden md:flex">
+                  <ListChecks className="h-4 w-4 mr-2" />
+                  Apostas
+                </Button>
                 {isAdmin && (
                   <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
                     <Shield className="h-4 w-4 mr-2" />
