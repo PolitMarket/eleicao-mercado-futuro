@@ -279,9 +279,47 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
                 step="1"
               />
             </div>
-            <div className="text-sm text-muted-foreground">
-              Retorno potencial: {betAmount ? (parseFloat(betAmount) * (betType === "sim" ? (100 / (selectedOption?.percentage || 1)) : (100 / (100 - (selectedOption?.percentage || 50))))).toFixed(0) : "0"} créditos
-            </div>
+            {betAmount && selectedOption && (
+              <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Odd:</span>
+                  <span className="font-bold text-primary">
+                    {(() => {
+                      const probability = betType === "sim" 
+                        ? selectedOption.percentage / 100 
+                        : (100 - selectedOption.percentage) / 100;
+                      return (1 / probability).toFixed(2);
+                    })()}x
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Retorno potencial:</span>
+                  <span className="font-bold text-success">
+                    {(() => {
+                      const amount = parseFloat(betAmount);
+                      const probability = betType === "sim" 
+                        ? selectedOption.percentage / 100 
+                        : (100 - selectedOption.percentage) / 100;
+                      const odd = 1 / probability;
+                      return (amount * odd).toFixed(2);
+                    })()} créditos
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground pt-2 border-t">
+                  <span>Lucro potencial:</span>
+                  <span className="font-semibold">
+                    {(() => {
+                      const amount = parseFloat(betAmount);
+                      const probability = betType === "sim" 
+                        ? selectedOption.percentage / 100 
+                        : (100 - selectedOption.percentage) / 100;
+                      const odd = 1 / probability;
+                      return ((amount * odd) - amount).toFixed(2);
+                    })()} créditos
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setBetDialogOpen(false)} disabled={loading}>

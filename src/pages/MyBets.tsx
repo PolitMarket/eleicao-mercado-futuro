@@ -91,11 +91,16 @@ const MyBets = () => {
   };
 
   const calculatePotentialReturn = (amount: number, prediction: boolean, yesPercentage: number) => {
-    if (prediction) {
-      return amount * (100 / yesPercentage);
-    } else {
-      return amount * (100 / (100 - yesPercentage));
-    }
+    // Odds = 1 / Probabilidade
+    // Retorno = Aposta * Odd
+    const probability = prediction ? yesPercentage / 100 : (100 - yesPercentage) / 100;
+    const odd = 1 / probability;
+    return amount * odd;
+  };
+
+  const calculateOdd = (prediction: boolean, yesPercentage: number) => {
+    const probability = prediction ? yesPercentage / 100 : (100 - yesPercentage) / 100;
+    return (1 / probability).toFixed(2);
   };
 
   return (
@@ -153,10 +158,16 @@ const MyBets = () => {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                       <div>
                         <p className="text-xs text-muted-foreground mb-1">Valor Apostado</p>
                         <p className="text-lg font-bold">{bet.amount} créditos</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">Odd</p>
+                        <p className="text-lg font-bold text-primary">
+                          {calculateOdd(bet.prediction, bet.market.yes_percentage)}x
+                        </p>
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground mb-1">Retorno Potencial</p>
@@ -165,7 +176,7 @@ const MyBets = () => {
                             bet.amount,
                             bet.prediction,
                             bet.market.yes_percentage
-                          ).toFixed(0)}{" "}
+                          ).toFixed(2)}{" "}
                           créditos
                         </p>
                       </div>
