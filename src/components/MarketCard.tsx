@@ -285,9 +285,7 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
                   <span className="text-muted-foreground">Odd:</span>
                   <span className="font-bold text-primary">
                     {(() => {
-                      const probability = betType === "sim" 
-                        ? selectedOption.percentage / 100 
-                        : (100 - selectedOption.percentage) / 100;
+                      const probability = selectedOption.percentage / 100;
                       return (1 / probability).toFixed(2);
                     })()}x
                   </span>
@@ -297,9 +295,7 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
                   <span className="font-bold text-success">
                     {(() => {
                       const amount = parseFloat(betAmount);
-                      const probability = betType === "sim" 
-                        ? selectedOption.percentage / 100 
-                        : (100 - selectedOption.percentage) / 100;
+                      const probability = selectedOption.percentage / 100;
                       const odd = 1 / probability;
                       return (amount * odd).toFixed(2);
                     })()} créditos
@@ -310,9 +306,7 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
                   <span className="font-semibold">
                     {(() => {
                       const amount = parseFloat(betAmount);
-                      const probability = betType === "sim" 
-                        ? selectedOption.percentage / 100 
-                        : (100 - selectedOption.percentage) / 100;
+                      const probability = selectedOption.percentage / 100;
                       const odd = 1 / probability;
                       return ((amount * odd) - amount).toFixed(2);
                     })()} créditos
