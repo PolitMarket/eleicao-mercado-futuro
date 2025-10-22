@@ -46,12 +46,12 @@ const HeroSection = () => {
             </div>
 
             <div className="bg-card rounded-xl p-6 shadow-sm">
-              <div className="bg-danger/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                <TrendingUp className="h-6 w-6 text-danger" />
+              <div className="bg-success/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                <TrendingUp className="h-6 w-6 text-success" />
               </div>
-              <h3 className="font-semibold mb-2">Fins Acadêmicos</h3>
+              <h3 className="font-semibold mb-2">Crescimento Garantido</h3>
               <p className="text-sm text-muted-foreground">
-                Plataforma educacional e de pesquisa
+                Multiplique seus ganhos com previsões certeiras
               </p>
             </div>
           </div>
