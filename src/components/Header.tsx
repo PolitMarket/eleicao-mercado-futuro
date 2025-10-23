@@ -1,4 +1,4 @@
-import { TrendingUp, LogOut, Shield, Coins, ListChecks } from "lucide-react";
+import { TrendingUp, LogOut, Shield, Coins, ListChecks, DollarSign } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,8 @@ import { Session } from "@supabase/supabase-js";
 import { BuyCreditsDialog } from "./BuyCreditsDialog";
 import { WithdrawDialog } from "./WithdrawDialog";
 import { useUserBalance } from "@/hooks/useUserBalance";
+
+const CREDIT_TO_BRL = 0.10; // 1 crédito = R$ 0,10
 
 const Header = () => {
   const navigate = useNavigate();
@@ -55,18 +57,21 @@ const Header = () => {
     });
   };
 
+  const brlValue = (balance * CREDIT_TO_BRL).toFixed(2);
+
   return (
     <header className="border-b bg-card sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold">PolitMarket</h1>
-            </div>
+      <div className="container mx-auto px-4 py-3">
+        {/* Main Row */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Logo */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <TrendingUp className="h-6 w-6 text-primary" />
+            <h1 className="text-xl md:text-2xl font-bold">PolitMarket</h1>
           </div>
           
-          <nav className="hidden md:flex items-center gap-6">
+          {/* Navigation - Hidden on small screens */}
+          <nav className="hidden lg:flex items-center gap-6">
             <a href="/" className="text-sm font-medium hover:text-primary transition-colors">
               Mercados
             </a>
@@ -80,31 +85,55 @@ const Header = () => {
             </a>
           </nav>
 
+          {/* User Actions */}
           <div className="flex items-center gap-2">
             {session ? (
               <>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary/10 text-primary">
+                {/* Balance Display */}
+                <div className="hidden md:flex flex-col items-end gap-0.5 px-4 py-2 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+                  <div className="flex items-center gap-2">
+                    <Coins className="h-4 w-4 text-primary" />
+                    <span className="text-lg font-bold text-primary">{balance.toFixed(0)}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <DollarSign className="h-3 w-3" />
+                    <span>R$ {brlValue}</span>
+                  </div>
+                </div>
+
+                {/* Mobile Balance */}
+                <div className="flex md:hidden items-center gap-1 px-3 py-1.5 rounded-md bg-primary/10 text-primary">
                   <Coins className="h-4 w-4" />
                   <span className="text-sm font-semibold">{balance.toFixed(0)}</span>
                 </div>
-                <BuyCreditsDialog />
-                <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
-                <Button variant="outline" size="sm" onClick={() => navigate("/my-bets")} className="hidden md:flex">
+
+                {/* Action Buttons */}
+                <div className="hidden md:flex items-center gap-2">
+                  <BuyCreditsDialog />
+                  <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => navigate("/my-bets")} 
+                  className="hidden lg:flex"
+                >
                   <ListChecks className="h-4 w-4 mr-2" />
                   Apostas
                 </Button>
+
                 {isAdmin && (
                   <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
-                    <Shield className="h-4 w-4 mr-2" />
-                    Admin
+                    <Shield className="h-4 w-4 mr-2 hidden sm:inline" />
+                    <span className="hidden sm:inline">Admin</span>
+                    <Shield className="h-4 w-4 sm:hidden" />
                   </Button>
                 )}
-                <span className="text-sm text-muted-foreground hidden md:inline">
-                  {session.user.email}
-                </span>
+
                 <Button variant="ghost" size="sm" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sair
+                  <LogOut className="h-4 w-4 mr-0 sm:mr-2" />
+                  <span className="hidden sm:inline">Sair</span>
                 </Button>
               </>
             ) : (
@@ -119,6 +148,22 @@ const Header = () => {
             )}
           </div>
         </div>
+
+        {/* Mobile Action Bar - Only visible on small screens when logged in */}
+        {session && (
+          <div className="flex md:hidden items-center justify-center gap-2 mt-3 pt-3 border-t">
+            <BuyCreditsDialog />
+            <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate("/my-bets")}
+            >
+              <ListChecks className="h-4 w-4 mr-2" />
+              Apostas
+            </Button>
+          </div>
+        )}
       </div>
     </header>
   );
