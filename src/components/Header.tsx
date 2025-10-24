@@ -8,6 +8,7 @@ import { Session } from "@supabase/supabase-js";
 import { BuyCreditsDialog } from "./BuyCreditsDialog";
 import { WithdrawDialog } from "./WithdrawDialog";
 import { useUserBalance } from "@/hooks/useUserBalance";
+import { NotificationsDropdown } from "./NotificationsDropdown";
 
 const CREDIT_TO_BRL = 0.10; // 1 crédito = R$ 0,10
 
@@ -132,6 +133,8 @@ const Header = () => {
                   <DollarSign className="h-4 w-4 mr-2" />
                   Transações
                 </Button>
+
+                <NotificationsDropdown session={session} />
 
                 {isAdmin && (
                   <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
