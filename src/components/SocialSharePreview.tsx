@@ -72,7 +72,7 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
           Compartilhar
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-md sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Compartilhar Mercado</DialogTitle>
           <DialogDescription>
@@ -80,29 +80,29 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-hidden">
           {/* Preview Card - Compacto */}
           <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">Preview:</p>
             <Card className="overflow-hidden border">
-              <div className="relative h-28 bg-muted flex items-center justify-center p-2">
+              <div className="relative h-24 bg-muted flex items-center justify-center p-2">
                 <img 
                   src={image} 
                   alt={title}
                   className="max-w-full max-h-full object-contain"
                 />
               </div>
-              <div className="p-3 space-y-1.5">
-                <h4 className="font-semibold text-sm line-clamp-2 break-words">
+              <div className="p-3 space-y-1">
+                <h4 className="font-semibold text-sm line-clamp-1">
                   {title}
                 </h4>
-                <p className="text-xs text-muted-foreground line-clamp-2 break-words">
+                <p className="text-xs text-muted-foreground line-clamp-1">
                   {description}
                 </p>
                 {stats && (
-                  <div className="flex flex-wrap gap-2 text-xs text-muted-foreground pt-1">
-                    {stats.volume && <span className="whitespace-nowrap">{stats.volume}</span>}
-                    {stats.percentage && <span className="font-semibold text-primary whitespace-nowrap">{stats.percentage}%</span>}
+                  <div className="flex flex-wrap gap-2 text-xs text-muted-foreground pt-0.5">
+                    {stats.volume && <span>{stats.volume}</span>}
+                    {stats.percentage && <span className="font-semibold text-primary">{stats.percentage}%</span>}
                   </div>
                 )}
               </div>
@@ -114,40 +114,44 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
             <p className="text-sm font-medium text-muted-foreground">Compartilhar em:</p>
             <div className="grid grid-cols-2 gap-2">
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
-                className="gap-2 justify-start"
+                className="w-full gap-2 justify-start"
                 onClick={() => handleShare("twitter")}
               >
-                <Twitter className="h-4 w-4" />
-                Twitter
+                <Twitter className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">Twitter</span>
               </Button>
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
-                className="gap-2 justify-start"
+                className="w-full gap-2 justify-start"
                 onClick={() => handleShare("facebook")}
               >
-                <Facebook className="h-4 w-4" />
-                Facebook
+                <Facebook className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">Facebook</span>
               </Button>
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
-                className="gap-2 justify-start"
+                className="w-full gap-2 justify-start"
                 onClick={() => handleShare("whatsapp")}
               >
-                <MessageCircle className="h-4 w-4" />
-                WhatsApp
+                <MessageCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">WhatsApp</span>
               </Button>
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
-                className="gap-2 justify-start"
+                className="w-full gap-2 justify-start"
                 onClick={() => handleShare("linkedin")}
               >
-                <Linkedin className="h-4 w-4" />
-                LinkedIn
+                <Linkedin className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">LinkedIn</span>
               </Button>
             </div>
           </div>
@@ -155,13 +159,13 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
           {/* Copy Link */}
           <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">Ou copie o link:</p>
-            <div className="flex gap-2">
-              <div className="flex-1 px-2 py-1.5 rounded-md border bg-muted text-xs truncate">
-                {shareUrl}
+            <div className="flex gap-2 min-w-0">
+              <div className="flex-1 min-w-0 px-2 py-1.5 rounded-md border bg-muted text-xs overflow-hidden">
+                <div className="truncate">{shareUrl}</div>
               </div>
-              <Button onClick={handleCopyLink} size="sm" className="gap-2">
-                <Copy className="h-4 w-4" />
-                Copiar
+              <Button type="button" onClick={handleCopyLink} size="sm" className="gap-1 flex-shrink-0">
+                <Copy className="h-3 w-3" />
+                <span className="hidden sm:inline">Copiar</span>
               </Button>
             </div>
           </div>
