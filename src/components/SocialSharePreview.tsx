@@ -72,64 +72,59 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
           Compartilhar
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Compartilhar Mercado</DialogTitle>
           <DialogDescription>
-            Compartilhe este mercado nas suas redes sociais ou copie o link
+            Compartilhe este mercado nas suas redes sociais
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-6">
-          {/* Preview Card */}
+        <div className="space-y-4">
+          {/* Preview Card - Compacto */}
           <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">Preview nas redes sociais:</p>
-            <Card className="overflow-hidden border-2">
-              <div className="aspect-[1.91/1] relative overflow-hidden bg-muted">
+            <p className="text-sm font-medium text-muted-foreground">Preview:</p>
+            <Card className="overflow-hidden border">
+              <div className="relative h-32 bg-muted">
                 <img 
                   src={image} 
                   alt={title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 space-y-2">
-                  <h3 className="font-bold text-xl line-clamp-2 text-foreground">
-                    {title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {description}
-                  </p>
-                  {stats && (
-                    <div className="flex gap-4 text-xs text-muted-foreground">
-                      {stats.volume && <span>Volume: {stats.volume}</span>}
-                      {stats.percentage && <span className="font-semibold text-primary">{stats.percentage}%</span>}
-                      {stats.participants && <span>{stats.participants} participantes</span>}
-                    </div>
-                  )}
-                </div>
               </div>
-              <div className="p-4 bg-card">
-                <p className="text-xs text-muted-foreground truncate">
-                  politmarket.com.br
+              <div className="p-3 space-y-1">
+                <h4 className="font-semibold text-sm line-clamp-1">
+                  {title}
+                </h4>
+                <p className="text-xs text-muted-foreground line-clamp-1">
+                  {description}
                 </p>
+                {stats && (
+                  <div className="flex gap-3 text-xs text-muted-foreground">
+                    {stats.volume && <span>{stats.volume}</span>}
+                    {stats.percentage && <span className="font-semibold text-primary">{stats.percentage}%</span>}
+                  </div>
+                )}
               </div>
             </Card>
           </div>
 
           {/* Share Buttons */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">Compartilhar em:</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               <Button
                 variant="outline"
+                size="sm"
                 className="gap-2 justify-start"
                 onClick={() => handleShare("twitter")}
               >
                 <Twitter className="h-4 w-4" />
-                Twitter / X
+                Twitter
               </Button>
               <Button
                 variant="outline"
+                size="sm"
                 className="gap-2 justify-start"
                 onClick={() => handleShare("facebook")}
               >
@@ -138,6 +133,7 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
               </Button>
               <Button
                 variant="outline"
+                size="sm"
                 className="gap-2 justify-start"
                 onClick={() => handleShare("whatsapp")}
               >
@@ -146,6 +142,7 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
               </Button>
               <Button
                 variant="outline"
+                size="sm"
                 className="gap-2 justify-start"
                 onClick={() => handleShare("linkedin")}
               >
@@ -159,10 +156,10 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
           <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">Ou copie o link:</p>
             <div className="flex gap-2">
-              <div className="flex-1 px-3 py-2 rounded-lg border bg-muted text-sm truncate">
+              <div className="flex-1 px-2 py-1.5 rounded-md border bg-muted text-xs truncate">
                 {shareUrl}
               </div>
-              <Button onClick={handleCopyLink} className="gap-2">
+              <Button onClick={handleCopyLink} size="sm" className="gap-2">
                 <Copy className="h-4 w-4" />
                 Copiar
               </Button>
