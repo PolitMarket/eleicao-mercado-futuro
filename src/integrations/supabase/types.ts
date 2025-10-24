@@ -21,7 +21,9 @@ export type Database = {
           id: string
           market_id: string
           prediction: boolean
+          resolved: boolean | null
           user_id: string
+          won: boolean | null
         }
         Insert: {
           amount: number
@@ -29,7 +31,9 @@ export type Database = {
           id?: string
           market_id: string
           prediction: boolean
+          resolved?: boolean | null
           user_id: string
+          won?: boolean | null
         }
         Update: {
           amount?: number
@@ -37,7 +41,9 @@ export type Database = {
           id?: string
           market_id?: string
           prediction?: boolean
+          resolved?: boolean | null
           user_id?: string
+          won?: boolean | null
         }
         Relationships: [
           {
@@ -64,6 +70,7 @@ export type Database = {
           image_url: string | null
           market_type: string | null
           no_volume: number | null
+          result: boolean | null
           status: string | null
           title: string
           total_volume: number | null
@@ -85,6 +92,7 @@ export type Database = {
           image_url?: string | null
           market_type?: string | null
           no_volume?: number | null
+          result?: boolean | null
           status?: string | null
           title: string
           total_volume?: number | null
@@ -106,6 +114,7 @@ export type Database = {
           image_url?: string | null
           market_type?: string | null
           no_volume?: number | null
+          result?: boolean | null
           status?: string | null
           title?: string
           total_volume?: number | null
@@ -210,6 +219,10 @@ export type Database = {
       }
       increment_balance: {
         Args: { amount: number; user_id: string }
+        Returns: undefined
+      }
+      resolve_market: {
+        Args: { _market_id: string; _result: boolean }
         Returns: undefined
       }
     }

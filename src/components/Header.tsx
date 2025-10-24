@@ -123,6 +123,16 @@ const Header = () => {
                   Apostas
                 </Button>
 
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => navigate("/transactions")} 
+                  className="hidden lg:flex"
+                >
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Transações
+                </Button>
+
                 {isAdmin && (
                   <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
                     <Shield className="h-4 w-4 mr-2 hidden sm:inline" />
@@ -159,8 +169,16 @@ const Header = () => {
               size="sm" 
               onClick={() => navigate("/my-bets")}
             >
-              <ListChecks className="h-4 w-4 mr-2" />
+              <ListChecks className="h-4 w-4 mr-1.5" />
               Apostas
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate("/transactions")}
+            >
+              <DollarSign className="h-4 w-4 mr-1.5" />
+              Transações
             </Button>
           </div>
         )}

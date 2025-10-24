@@ -3,9 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, CheckCircle } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { EditMarketDialog } from "./EditMarketDialog";
+import { ResolveMarketDialog } from "./ResolveMarketDialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 interface Market {
@@ -17,12 +18,16 @@ interface Market {
   end_date: string;
   status: string;
   total_volume: number;
+  market_type: string;
+  candidate_1_name?: string;
+  candidate_2_name?: string;
 }
 
 export const MarketsList = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [editingMarket, setEditingMarket] = useState<Market | null>(null);
+  const [resolvingMarket, setResolvingMarket] = useState<Market | null>(null);
   const [deletingMarketId, setDeletingMarketId] = useState<string | null>(null);
 
   const { data: markets, isLoading } = useQuery({
@@ -62,6 +67,11 @@ export const MarketsList = () => {
   };
 
   const handleEditSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ["admin-markets"] });
+    queryClient.invalidateQueries({ queryKey: ["markets"] });
+  };
+
+  const handleResolveSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-markets"] });
     queryClient.invalidateQueries({ queryKey: ["markets"] });
   };
@@ -106,6 +116,16 @@ export const MarketsList = () => {
                 <TableCell>{new Date(market.end_date).toLocaleString('pt-BR')}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
+                    {market.status === 'active' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setResolvingMarket(market)}
+                        title="Resolver mercado"
+                      >
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
@@ -134,6 +154,15 @@ export const MarketsList = () => {
         onOpenChange={(open) => !open && setEditingMarket(null)}
         onSuccess={handleEditSuccess}
       />
+
+      {resolvingMarket && (
+        <ResolveMarketDialog
+          market={resolvingMarket}
+          open={!!resolvingMarket}
+          onOpenChange={(open) => !open && setResolvingMarket(null)}
+          onResolved={handleResolveSuccess}
+        />
+      )}
 
       <AlertDialog open={!!deletingMarketId} onOpenChange={(open) => !open && setDeletingMarketId(null)}>
         <AlertDialogContent>
