@@ -10,6 +10,7 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
+import SocialSharePreview from "./SocialSharePreview";
 
 interface Option {
   name: string;
@@ -244,9 +245,20 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
 
         <div className="mt-4 pt-4 border-t flex items-center justify-between text-xs text-muted-foreground">
           <span>Volume: {volume}</span>
-          <span className="text-primary cursor-pointer hover:underline">
-            Ver detalhes →
-          </span>
+          <div className="flex items-center gap-2">
+            <SocialSharePreview
+              title={title}
+              description={`${category} - Mercado de previsões eleitorais`}
+              image={image}
+              stats={{
+                volume,
+                percentage: options[0]?.percentage,
+              }}
+            />
+            <span className="text-primary cursor-pointer hover:underline">
+              Ver detalhes →
+            </span>
+          </div>
         </div>
       </div>
 
