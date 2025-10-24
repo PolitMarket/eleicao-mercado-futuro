@@ -1,6 +1,6 @@
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Share2, Copy, Twitter, Facebook, MessageCircle, Linkedin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -75,6 +75,9 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Compartilhar Mercado</DialogTitle>
+          <DialogDescription>
+            Compartilhe este mercado nas suas redes sociais ou copie o link
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
