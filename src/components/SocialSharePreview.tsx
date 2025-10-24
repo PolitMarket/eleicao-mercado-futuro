@@ -85,24 +85,24 @@ const SocialSharePreview = ({ title, description, image, stats, url }: SocialSha
           <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">Preview:</p>
             <Card className="overflow-hidden border">
-              <div className="relative h-32 bg-muted">
+              <div className="relative h-28 bg-muted flex items-center justify-center p-2">
                 <img 
                   src={image} 
                   alt={title}
-                  className="w-full h-full object-contain"
+                  className="max-w-full max-h-full object-contain"
                 />
               </div>
-              <div className="p-3 space-y-1">
-                <h4 className="font-semibold text-sm line-clamp-1">
+              <div className="p-3 space-y-1.5">
+                <h4 className="font-semibold text-sm line-clamp-2 break-words">
                   {title}
                 </h4>
-                <p className="text-xs text-muted-foreground line-clamp-1">
+                <p className="text-xs text-muted-foreground line-clamp-2 break-words">
                   {description}
                 </p>
                 {stats && (
-                  <div className="flex gap-3 text-xs text-muted-foreground">
-                    {stats.volume && <span>{stats.volume}</span>}
-                    {stats.percentage && <span className="font-semibold text-primary">{stats.percentage}%</span>}
+                  <div className="flex flex-wrap gap-2 text-xs text-muted-foreground pt-1">
+                    {stats.volume && <span className="whitespace-nowrap">{stats.volume}</span>}
+                    {stats.percentage && <span className="font-semibold text-primary whitespace-nowrap">{stats.percentage}%</span>}
                   </div>
                 )}
               </div>
