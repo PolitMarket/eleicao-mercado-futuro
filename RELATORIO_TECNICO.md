@@ -15,7 +15,7 @@
 
 ---
 
-## 🎯 Visão Geral do Projeto {#visão-geral}
+## Visão Geral do Projeto {#visão-geral}
 
 **PolitMarket** é uma plataforma de apostas em mercados de previsão política onde usuários podem apostar em resultados de eventos políticos usando um sistema de créditos.
 
@@ -59,7 +59,7 @@
 
 ---
 
-## 🏗️ Arquitetura do Sistema {#arquitetura}
+##  Arquitetura do Sistema {#arquitetura}
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -102,7 +102,7 @@
 
 ---
 
-## 📁 Estrutura de Pastas {#estrutura-de-pastas}
+##  Estrutura de Pastas {#estrutura-de-pastas}
 
 ```
 politmarket/
@@ -2033,4 +2033,4 @@ Boa sorte no desenvolvimento! 🚀
 
 **Versão do Documento**: 1.0  
 **Data**: Janeiro 2025  
-**Autor**: Documentação técnica do projeto PolitMarket
+**Autor**: Equipe da PolitMarket
