@@ -1,6 +1,6 @@
 # Mercado de Apostas Eleitorais
 
-Plataforma de apostas e previsões eleitorais.
+Plataforma de predições eleitorais
 
 ## Tecnologias
 - React
