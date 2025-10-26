@@ -77,6 +77,8 @@ serve(async (req) => {
     });
 
     console.log(`Payment session created: ${session.id}`);
+    console.log(`Payment methods available:`, session.payment_method_types);
+    console.log(`Session currency:`, session.currency);
 
     return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
