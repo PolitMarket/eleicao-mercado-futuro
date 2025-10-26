@@ -76,11 +76,6 @@ const Header = () => {
             <a href="/" className="text-sm font-medium hover:text-primary transition-colors">
               Mercados
             </a>
-            {session && (
-              <a href="/my-bets" className="text-sm font-medium hover:text-primary transition-colors">
-                Minhas Apostas
-              </a>
-            )}
             <a href="#" className="text-sm font-medium hover:text-primary transition-colors">
               Como Funciona
             </a>
