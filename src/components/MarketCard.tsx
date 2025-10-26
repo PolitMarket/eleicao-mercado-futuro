@@ -192,7 +192,7 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
       
       toast({
         title: "Aposta confirmada!",
-        description: `Você apostou ${amount} créditos em "${betType === "sim" ? "Sim" : "Não"}" no mercado: ${title}`,
+        description: `Você apostou ${amount} créditos em "${selectedOption?.name}" no mercado: ${title}`,
       });
 
       setBetDialogOpen(false);
