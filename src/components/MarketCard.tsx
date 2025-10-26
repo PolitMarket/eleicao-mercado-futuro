@@ -112,6 +112,15 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
     setLoading(true);
 
     try {
+      // Buscar o mercado atual
+      const { data: market, error: marketFetchError } = await supabase
+        .from("markets")
+        .select("*")
+        .eq("id", marketId)
+        .single();
+
+      if (marketFetchError) throw marketFetchError;
+
       // Atualizar saldo
       const newBalance = balance - amount;
       const { error: balanceError } = await supabase
@@ -132,6 +141,52 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
         });
 
       if (betError) throw betError;
+
+      // Atualizar volumes do mercado
+      let updatedMarket: any = {
+        total_volume: (market.total_volume || 0) + amount,
+      };
+
+      if (market.market_type === "candidates") {
+        // Para mercados de candidatos, atualizar baseado no nome da opção selecionada
+        if (selectedOption?.name === market.candidate_1_name) {
+          updatedMarket.candidate_1_volume = (market.candidate_1_volume || 0) + amount;
+        } else if (selectedOption?.name === market.candidate_2_name) {
+          updatedMarket.candidate_2_volume = (market.candidate_2_volume || 0) + amount;
+        }
+        
+        // Calcular nova porcentagem
+        const total = (updatedMarket.candidate_1_volume || market.candidate_1_volume || 0) + 
+                      (updatedMarket.candidate_2_volume || market.candidate_2_volume || 0);
+        if (total > 0) {
+          updatedMarket.yes_percentage = Math.round(
+            ((updatedMarket.candidate_1_volume || market.candidate_1_volume || 0) / total) * 100
+          );
+        }
+      } else {
+        // Para mercados sim/não
+        if (betType === "sim") {
+          updatedMarket.yes_volume = (market.yes_volume || 0) + amount;
+        } else {
+          updatedMarket.no_volume = (market.no_volume || 0) + amount;
+        }
+        
+        // Calcular nova porcentagem
+        const total = (updatedMarket.yes_volume || market.yes_volume || 0) + 
+                      (updatedMarket.no_volume || market.no_volume || 0);
+        if (total > 0) {
+          updatedMarket.yes_percentage = Math.round(
+            ((updatedMarket.yes_volume || market.yes_volume || 0) / total) * 100
+          );
+        }
+      }
+
+      const { error: marketUpdateError } = await supabase
+        .from("markets")
+        .update(updatedMarket)
+        .eq("id", marketId);
+
+      if (marketUpdateError) throw marketUpdateError;
 
       setBalance(newBalance);
       
