@@ -149,11 +149,22 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
 
       if (market.market_type === "candidates") {
         // Para mercados de candidatos, atualizar baseado no nome da opção selecionada
+        console.log('Debug - Market type: candidates');
+        console.log('Debug - Selected option name:', selectedOption?.name);
+        console.log('Debug - Candidate 1 name:', market.candidate_1_name);
+        console.log('Debug - Candidate 2 name:', market.candidate_2_name);
+        console.log('Debug - Current volumes:', {
+          candidate_1_volume: market.candidate_1_volume,
+          candidate_2_volume: market.candidate_2_volume
+        });
+        
         if (selectedOption?.name === market.candidate_1_name) {
           updatedMarket.candidate_1_volume = (market.candidate_1_volume || 0) + amount;
         } else if (selectedOption?.name === market.candidate_2_name) {
           updatedMarket.candidate_2_volume = (market.candidate_2_volume || 0) + amount;
         }
+        
+        console.log('Debug - Updated volumes:', updatedMarket);
         
         // Calcular nova porcentagem
         const total = (updatedMarket.candidate_1_volume || market.candidate_1_volume || 0) + 
@@ -163,6 +174,8 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
             ((updatedMarket.candidate_1_volume || market.candidate_1_volume || 0) / total) * 100
           );
         }
+        
+        console.log('Debug - New percentage:', updatedMarket.yes_percentage);
       } else {
         // Para mercados sim/não
         if (betType === "sim") {
