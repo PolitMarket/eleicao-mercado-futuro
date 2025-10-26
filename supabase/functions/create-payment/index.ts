@@ -56,7 +56,7 @@ serve(async (req) => {
       console.log(`Creating new customer for ${user.email}`);
     }
 
-    // Criar sessão de checkout
+    // Criar sessão de checkout com suporte a Pix e Cartão
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -67,6 +67,7 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
+      payment_method_types: ['card', 'pix'], // Permite pagamento via Pix e Cartão
       success_url: `${req.headers.get("origin")}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/?payment=canceled`,
       metadata: {
