@@ -1,4 +1,4 @@
-import { TrendingUp, LogOut, Shield, Coins, ListChecks, DollarSign } from "lucide-react";
+import { TrendingUp, LogOut, Shield, Coins, ListChecks, DollarSign, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -129,6 +129,16 @@ const Header = () => {
                   Transações
                 </Button>
 
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => navigate("/profile")} 
+                  className="hidden lg:flex"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Perfil
+                </Button>
+
                 <NotificationsDropdown session={session} />
 
                 {isAdmin && (
@@ -177,6 +187,14 @@ const Header = () => {
             >
               <DollarSign className="h-4 w-4 mr-1.5" />
               Transações
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate("/profile")}
+            >
+              <User className="h-4 w-4 mr-1.5" />
+              Perfil
             </Button>
           </div>
         )}
