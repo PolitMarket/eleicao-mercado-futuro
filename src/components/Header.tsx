@@ -1,4 +1,4 @@
-import { TrendingUp, LogOut, Shield, Coins, ListChecks, DollarSign, User } from "lucide-react";
+import { TrendingUp, LogOut, Shield, Coins, ListChecks, DollarSign, User, Menu, Plus, Minus } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +9,14 @@ import { BuyCreditsDialog } from "./BuyCreditsDialog";
 import { WithdrawDialog } from "./WithdrawDialog";
 import { useUserBalance } from "@/hooks/useUserBalance";
 import { NotificationsDropdown } from "./NotificationsDropdown";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 const CREDIT_TO_BRL = 0.10; // 1 crédito = R$ 0,10
 
@@ -103,56 +111,67 @@ const Header = () => {
                   <span className="text-sm font-semibold">{balance.toFixed(0)}</span>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="hidden md:flex items-center gap-2">
-                  <BuyCreditsDialog />
-                  <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
-                </div>
-
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => navigate("/my-bets")} 
-                  className="hidden lg:flex"
-                >
-                  <ListChecks className="h-4 w-4 mr-2" />
-                  Apostas
-                </Button>
-
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => navigate("/transactions")} 
-                  className="hidden lg:flex"
-                >
-                  <DollarSign className="h-4 w-4 mr-2" />
-                  Transações
-                </Button>
-
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => navigate("/profile")} 
-                  className="hidden lg:flex"
-                >
-                  <User className="h-4 w-4 mr-2" />
-                  Perfil
-                </Button>
-
                 <NotificationsDropdown session={session} />
 
-                {isAdmin && (
-                  <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
-                    <Shield className="h-4 w-4 mr-2 hidden sm:inline" />
-                    <span className="hidden sm:inline">Admin</span>
-                    <Shield className="h-4 w-4 sm:hidden" />
-                  </Button>
-                )}
-
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-0 sm:mr-2" />
-                  <span className="hidden sm:inline">Sair</span>
-                </Button>
+                {/* User Menu Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Menu className="h-4 w-4 mr-0 sm:mr-2" />
+                      <span className="hidden sm:inline">Menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-card z-50">
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">Minha Conta</p>
+                        <p className="text-xs leading-none text-muted-foreground">
+                          {session.user.email}
+                        </p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate("/profile")}>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Meu Perfil</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/my-bets")}>
+                      <ListChecks className="mr-2 h-4 w-4" />
+                      <span>Minhas Apostas</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/transactions")}>
+                      <DollarSign className="mr-2 h-4 w-4" />
+                      <span>Transações</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <div className="cursor-pointer">
+                        <Plus className="mr-2 h-4 w-4" />
+                        <BuyCreditsDialog />
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <div className="cursor-pointer">
+                        <Minus className="mr-2 h-4 w-4" />
+                        <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
+                      </div>
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => navigate("/admin")}>
+                          <Shield className="mr-2 h-4 w-4" />
+                          <span>Admin</span>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Sair</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               <>
@@ -166,38 +185,6 @@ const Header = () => {
             )}
           </div>
         </div>
-
-        {/* Mobile Action Bar - Only visible on small screens when logged in */}
-        {session && (
-          <div className="flex md:hidden items-center justify-center gap-2 mt-3 pt-3 border-t">
-            <BuyCreditsDialog />
-            <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => navigate("/my-bets")}
-            >
-              <ListChecks className="h-4 w-4 mr-1.5" />
-              Apostas
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => navigate("/transactions")}
-            >
-              <DollarSign className="h-4 w-4 mr-1.5" />
-              Transações
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => navigate("/profile")}
-            >
-              <User className="h-4 w-4 mr-1.5" />
-              Perfil
-            </Button>
-          </div>
-        )}
       </div>
     </header>
   );
