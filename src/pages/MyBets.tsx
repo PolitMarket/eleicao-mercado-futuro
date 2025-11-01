@@ -17,6 +17,9 @@ interface Bet {
     category: string;
     status: string;
     yes_percentage: number;
+    market_type: string;
+    candidate_1_name: string | null;
+    candidate_2_name: string | null;
   };
 }
 
@@ -62,7 +65,10 @@ const MyBets = () => {
               title,
               category,
               status,
-              yes_percentage
+              yes_percentage,
+              market_type,
+              candidate_1_name,
+              candidate_2_name
             )
           `)
           .eq("user_id", session.user.id)
@@ -101,6 +107,18 @@ const MyBets = () => {
   const calculateOdd = (prediction: boolean, yesPercentage: number) => {
     const probability = prediction ? yesPercentage / 100 : (100 - yesPercentage) / 100;
     return (1 / probability).toFixed(2);
+  };
+
+  const getBetOptionLabel = (bet: Bet) => {
+    if (bet.market.market_type === "candidates") {
+      // Para mercados de candidatos
+      return bet.prediction 
+        ? bet.market.candidate_1_name || "Candidato 1"
+        : bet.market.candidate_2_name || "Candidato 2";
+    } else {
+      // Para mercados sim/não
+      return bet.prediction ? "SIM" : "NÃO";
+    }
   };
 
   return (
@@ -151,9 +169,10 @@ const MyBets = () => {
                       </div>
                       <Badge
                         variant={bet.prediction ? "default" : "destructive"}
-                        className="ml-2"
+                        className="ml-2 max-w-[150px] truncate"
+                        title={getBetOptionLabel(bet)}
                       >
-                        {bet.prediction ? "SIM" : "NÃO"}
+                        {getBetOptionLabel(bet)}
                       </Badge>
                     </div>
                   </CardHeader>
