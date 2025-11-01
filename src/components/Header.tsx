@@ -1,4 +1,4 @@
-import { TrendingUp, LogOut, Shield, Coins, ListChecks, DollarSign, User, Menu, Plus, Minus } from "lucide-react";
+import { TrendingUp, LogOut, Shield, Coins, ListChecks, DollarSign, User, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -111,6 +111,10 @@ const Header = () => {
                   <span className="text-sm font-semibold">{balance.toFixed(0)}</span>
                 </div>
 
+                {/* Action Buttons - Outside Dropdown */}
+                <BuyCreditsDialog />
+                <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
+
                 <NotificationsDropdown session={session} />
 
                 {/* User Menu Dropdown */}
@@ -142,19 +146,6 @@ const Header = () => {
                     <DropdownMenuItem onClick={() => navigate("/transactions")}>
                       <DollarSign className="mr-2 h-4 w-4" />
                       <span>Transações</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <div className="cursor-pointer">
-                        <Plus className="mr-2 h-4 w-4" />
-                        <BuyCreditsDialog />
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <div className="cursor-pointer">
-                        <Minus className="mr-2 h-4 w-4" />
-                        <WithdrawDialog balance={balance} onSuccess={refetchBalance} />
-                      </div>
                     </DropdownMenuItem>
                     {isAdmin && (
                       <>
