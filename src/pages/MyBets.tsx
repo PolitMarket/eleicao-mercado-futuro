@@ -110,11 +110,20 @@ const MyBets = () => {
   };
 
   const getBetOptionLabel = (bet: Bet) => {
+    console.log('=== EXIBINDO APOSTA ===');
+    console.log('Market type:', bet.market.market_type);
+    console.log('Prediction:', bet.prediction);
+    console.log('Candidato 1:', bet.market.candidate_1_name);
+    console.log('Candidato 2:', bet.market.candidate_2_name);
+    
     if (bet.market.market_type === "candidates") {
       // Para mercados de candidatos
-      return bet.prediction 
+      const result = bet.prediction 
         ? bet.market.candidate_1_name || "Candidato 1"
         : bet.market.candidate_2_name || "Candidato 2";
+      console.log('Resultado exibido:', result);
+      console.log('=======================');
+      return result;
     } else {
       // Para mercados sim/não
       return bet.prediction ? "SIM" : "NÃO";

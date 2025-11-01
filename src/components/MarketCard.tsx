@@ -137,6 +137,12 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
       if (market.market_type === "candidates" && selectedOption) {
         // true = candidato 1, false = candidato 2
         predictionValue = selectedOption.name === market.candidate_1_name;
+        console.log('=== SALVANDO APOSTA ===');
+        console.log('Candidato escolhido:', selectedOption.name);
+        console.log('Candidato 1 do mercado:', market.candidate_1_name);
+        console.log('Candidato 2 do mercado:', market.candidate_2_name);
+        console.log('Prediction value (true=candidato1, false=candidato2):', predictionValue);
+        console.log('=======================');
       }
       
       const { error: betError } = await supabase
