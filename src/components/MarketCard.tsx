@@ -131,13 +131,21 @@ const MarketCard = ({ title, category, image, options, volume, isLive, marketId 
       if (balanceError) throw balanceError;
 
       // Registrar aposta
+      // Para mercados de candidatos, determinar prediction baseado no nome do candidato
+      let predictionValue = betType === "sim";
+      
+      if (market.market_type === "candidates" && selectedOption) {
+        // true = candidato 1, false = candidato 2
+        predictionValue = selectedOption.name === market.candidate_1_name;
+      }
+      
       const { error: betError } = await supabase
         .from("bets")
         .insert({
           user_id: session.user.id,
           market_id: marketId,
           amount: amount,
-          prediction: betType === "sim",
+          prediction: predictionValue,
         });
 
       if (betError) throw betError;
