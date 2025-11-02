@@ -1933,28 +1933,6 @@ supabase
 - Deploy automático ao fazer merge na main
 - Preview deploys para PRs
 
----
-
-### Recursos Úteis
-
-#### Documentação Oficial
-- **React**: https://react.dev
-- **TypeScript**: https://www.typescriptlang.org/docs
-- **Tailwind CSS**: https://tailwindcss.com/docs
-- **Supabase**: https://supabase.com/docs
-- **Stripe**: https://stripe.com/docs
-- **shadcn/ui**: https://ui.shadcn.com
-
-#### Comunidades
-- Discord do Lovable
-- Supabase Discord
-- Stack Overflow
-- Reddit r/react, r/typescript
-
-#### Cursos e Tutoriais
-- Supabase YouTube Channel
-- Fireship (YouTube) - Quick tutorials
-- Web Dev Simplified (YouTube)
 
 ---
 
