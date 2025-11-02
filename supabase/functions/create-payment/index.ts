@@ -32,8 +32,16 @@ serve(async (req) => {
   try {
     console.log("[CREATE-PAYMENT] Starting payment creation");
     
-    const { priceId } = await req.json();
-    console.log("[CREATE-PAYMENT] Price ID:", priceId);
+    // Parse request body
+    let priceId;
+    try {
+      const body = await req.json();
+      priceId = body.priceId;
+      console.log("[CREATE-PAYMENT] Price ID:", priceId);
+    } catch (parseError) {
+      console.error("[CREATE-PAYMENT] Error parsing request body:", parseError);
+      throw new Error("Invalid request body");
+    }
 
     if (!priceId || !CREDIT_PACKAGES[priceId]) {
       console.error("[CREATE-PAYMENT] Invalid price ID:", priceId);
@@ -63,7 +71,15 @@ serve(async (req) => {
 
     console.log(`[CREATE-PAYMENT] Creating payment for user: ${user.email}`);
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    // Verify Stripe key
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      console.error("[CREATE-PAYMENT] STRIPE_SECRET_KEY not configured");
+      throw new Error("Payment system not configured. Contact support.");
+    }
+    console.log("[CREATE-PAYMENT] Stripe key found");
+
+    const stripe = new Stripe(stripeKey, {
       apiVersion: "2025-08-27.basil",
     });
 
@@ -107,8 +123,16 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("[CREATE-PAYMENT] Error:", error);
+    console.error("[CREATE-PAYMENT] Error stack:", error instanceof Error ? error.stack : "No stack trace");
+    
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const userFriendlyMessage = errorMessage.includes("STRIPE_SECRET_KEY") 
+      ? "Sistema de pagamento não configurado. Entre em contato com o suporte."
+      : "Erro ao processar pagamento. Tente novamente.";
+    
     return new Response(JSON.stringify({ 
-      error: error instanceof Error ? error.message : "Unknown error" 
+      error: userFriendlyMessage,
+      details: errorMessage 
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
