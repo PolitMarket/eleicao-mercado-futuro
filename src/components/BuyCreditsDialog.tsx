@@ -44,6 +44,8 @@ export const BuyCreditsDialog = () => {
     try {
       console.log("=== INICIANDO COMPRA DE CRÉDITOS ===");
       console.log("Pacote selecionado:", pkg);
+      console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+      console.log("Supabase Project ID:", import.meta.env.VITE_SUPABASE_PROJECT_ID);
       setLoading(pkg.id);
 
       const { data: { session } } = await supabase.auth.getSession();
