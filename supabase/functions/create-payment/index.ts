@@ -5,6 +5,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 // Mapeamento de price_id para quantidade de créditos
@@ -15,8 +16,12 @@ const CREDIT_PACKAGES: Record<string, number> = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { 
+      headers: corsHeaders,
+      status: 200 
+    });
   }
 
   const supabaseClient = createClient(
@@ -25,22 +30,38 @@ serve(async (req) => {
   );
 
   try {
+    console.log("[CREATE-PAYMENT] Starting payment creation");
+    
     const { priceId } = await req.json();
+    console.log("[CREATE-PAYMENT] Price ID:", priceId);
 
     if (!priceId || !CREDIT_PACKAGES[priceId]) {
+      console.error("[CREATE-PAYMENT] Invalid price ID:", priceId);
       throw new Error("Invalid price ID");
     }
 
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      console.error("[CREATE-PAYMENT] No authorization header");
+      throw new Error("No authorization header");
+    }
+
     const token = authHeader.replace("Bearer ", "");
-    const { data } = await supabaseClient.auth.getUser(token);
+    const { data, error: authError } = await supabaseClient.auth.getUser(token);
+    
+    if (authError) {
+      console.error("[CREATE-PAYMENT] Auth error:", authError);
+      throw authError;
+    }
+    
     const user = data.user;
     
     if (!user?.email) {
+      console.error("[CREATE-PAYMENT] User not authenticated");
       throw new Error("User not authenticated or email not available");
     }
 
-    console.log(`Creating payment session for user ${user.email} with priceId ${priceId}`);
+    console.log(`[CREATE-PAYMENT] Creating payment for user: ${user.email}`);
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
@@ -51,9 +72,9 @@ serve(async (req) => {
     let customerId;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
-      console.log(`Found existing customer: ${customerId}`);
+      console.log(`[CREATE-PAYMENT] Found existing customer: ${customerId}`);
     } else {
-      console.log(`Creating new customer for ${user.email}`);
+      console.log(`[CREATE-PAYMENT] Creating new customer for ${user.email}`);
     }
 
     // Criar sessão de checkout com suporte a Pix e Cartão
@@ -76,17 +97,19 @@ serve(async (req) => {
       },
     });
 
-    console.log(`Payment session created: ${session.id}`);
-    console.log(`Payment methods available:`, session.payment_method_types);
-    console.log(`Session currency:`, session.currency);
+    console.log(`[CREATE-PAYMENT] Payment session created: ${session.id}`);
+    console.log(`[CREATE-PAYMENT] Payment methods:`, session.payment_method_types);
+    console.log(`[CREATE-PAYMENT] Currency:`, session.currency);
 
     return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    console.error("Error creating payment:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+    console.error("[CREATE-PAYMENT] Error:", error);
+    return new Response(JSON.stringify({ 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
