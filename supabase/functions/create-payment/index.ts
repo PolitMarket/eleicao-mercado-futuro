@@ -10,9 +10,9 @@ const corsHeaders = {
 
 // Mapeamento de price_id para quantidade de créditos
 const CREDIT_PACKAGES: Record<string, number> = {
-  "price_1SJeZnPMwKgpsB6l1xl5B7jW": 100,  // R$ 10 = 100 créditos
-  "price_1SJeahPMwKgpsB6laXXyJTic": 500,  // R$ 45 = 500 créditos
-  "price_1SJebLPMwKgpsB6lLTpy7MLN": 1000, // R$ 80 = 1000 créditos
+  "price_1SP9lhPMwKgpsB6lSg0aAUSI": 100,  // R$ 10 = 100 créditos
+  "price_1SP9mKPMwKgpsB6l0B1PGDN7": 500,  // R$ 45 = 500 créditos
+  "price_1SP9mZPMwKgpsB6lX0jMEbU7": 1000, // R$ 80 = 1000 créditos
 };
 
 serve(async (req) => {

@@ -17,20 +17,20 @@ interface CreditPackage {
 const PACKAGES: CreditPackage[] = [
   {
     id: "small",
-    priceId: "price_1SJeZnPMwKgpsB6l1xl5B7jW",
+    priceId: "price_1SP9lhPMwKgpsB6lSg0aAUSI",
     credits: 100,
     price: 10,
   },
   {
     id: "medium",
-    priceId: "price_1SJeahPMwKgpsB6laXXyJTic",
+    priceId: "price_1SP9mKPMwKgpsB6l0B1PGDN7",
     credits: 500,
     price: 45,
     popular: true,
   },
   {
     id: "large",
-    priceId: "price_1SJebLPMwKgpsB6lLTpy7MLN",
+    priceId: "price_1SP9mZPMwKgpsB6lX0jMEbU7",
     credits: 1000,
     price: 80,
   },
