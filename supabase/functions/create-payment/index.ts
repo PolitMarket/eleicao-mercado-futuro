@@ -38,14 +38,24 @@ serve(async (req) => {
       const body = await req.json();
       priceId = body.priceId;
       console.log("[CREATE-PAYMENT] Price ID:", priceId);
+      console.log("[CREATE-PAYMENT] Request body:", JSON.stringify(body));
     } catch (parseError) {
       console.error("[CREATE-PAYMENT] Error parsing request body:", parseError);
       throw new Error("Invalid request body");
     }
 
-    if (!priceId || !CREDIT_PACKAGES[priceId]) {
+    console.log("[CREATE-PAYMENT] Available packages:", Object.keys(CREDIT_PACKAGES));
+    console.log("[CREATE-PAYMENT] Checking if price ID exists in packages...");
+    
+    if (!priceId) {
+      console.error("[CREATE-PAYMENT] Price ID is missing");
+      throw new Error("Price ID is required");
+    }
+    
+    if (!CREDIT_PACKAGES[priceId]) {
       console.error("[CREATE-PAYMENT] Invalid price ID:", priceId);
-      throw new Error("Invalid price ID");
+      console.error("[CREATE-PAYMENT] Available price IDs:", Object.keys(CREDIT_PACKAGES));
+      throw new Error(`Invalid price ID: ${priceId}`);
     }
 
     const authHeader = req.headers.get("Authorization");
