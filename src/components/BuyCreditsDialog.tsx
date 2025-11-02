@@ -42,9 +42,13 @@ export const BuyCreditsDialog = () => {
 
   const handlePurchase = async (pkg: CreditPackage) => {
     try {
+      console.log("=== INICIANDO COMPRA DE CRÉDITOS ===");
+      console.log("Pacote selecionado:", pkg);
       setLoading(pkg.id);
 
       const { data: { session } } = await supabase.auth.getSession();
+      console.log("Sessão do usuário:", session ? "Logado" : "Não logado");
+      
       if (!session) {
         toast({
           title: "Erro",
@@ -54,21 +58,32 @@ export const BuyCreditsDialog = () => {
         return;
       }
 
+      console.log("Invocando edge function create-payment...");
       const { data, error } = await supabase.functions.invoke("create-payment", {
         body: { priceId: pkg.priceId },
       });
 
-      if (error) throw error;
+      console.log("Resposta da edge function:", { data, error });
+
+      if (error) {
+        console.error("Erro retornado pela edge function:", error);
+        throw error;
+      }
 
       if (data?.url) {
+        console.log("URL do checkout recebida:", data.url);
         window.open(data.url, "_blank");
         setIsOpen(false);
+      } else {
+        console.error("URL do checkout não foi retornada");
+        throw new Error("URL do checkout não foi retornada");
       }
     } catch (error) {
-      console.error("Error creating payment:", error);
+      console.error("=== ERRO NA COMPRA DE CRÉDITOS ===");
+      console.error("Detalhes do erro:", error);
       toast({
         title: "Erro",
-        description: "Erro ao criar pagamento. Tente novamente.",
+        description: error instanceof Error ? error.message : "Erro ao criar pagamento. Tente novamente.",
         variant: "destructive",
       });
     } finally {
